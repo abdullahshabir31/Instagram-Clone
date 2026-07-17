@@ -1,4 +1,13 @@
-node_modules
-venv
+# Backend
+backend/venv/
+backend/__pycache__/
+
+# Environment
 .env
-__pycache__
+*.env
+
+# Frontend
+frontend/node_modules/
+
+# Build
+dist/
