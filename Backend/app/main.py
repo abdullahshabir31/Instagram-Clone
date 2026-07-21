@@ -8,6 +8,7 @@ from app.routers import posts
 from app.routers import likes
 from app.routers import comments
 from app.routers import follows
+from app.routers import saved_posts
 
 app = FastAPI()
 
@@ -18,6 +19,7 @@ app.include_router(posts.router)
 app.include_router(likes.router)
 app.include_router(comments.router)
 app.include_router(follows.router)
+app.include_router(saved_posts.router)
 
 
 @app.get("/")

@@ -42,7 +42,6 @@ class Post(Base):
     likes = relationship(
     "Like",
     cascade="all, delete",
-    back_populates="post"
     )
 
     owner = relationship("User")
@@ -122,3 +121,31 @@ class Follow(Base):
         TIMESTAMP(timezone=True),
         server_default=text("now()")
     )
+
+class SavedPost(Base):
+    __tablename__ = "saved_posts"
+
+    id = Column(Integer, primary_key=True, index=True)
+
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False
+    )
+
+    post_id = Column(
+        Integer,
+        ForeignKey("posts.id", ondelete="CASCADE"),
+        nullable=False
+    )
+
+    created_at = Column(
+        TIMESTAMP(timezone=True),
+        server_default=text("CURRENT_TIMESTAMP"),
+        nullable=False
+    )
+
+    user = relationship("User")
+
+    post = relationship("Post")
+

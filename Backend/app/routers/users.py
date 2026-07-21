@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Depends, status, HTTPException, Query
+from fastapi import APIRouter, Depends, status, HTTPException, Query, UploadFile, File, Form
 from sqlalchemy.orm import Session
 from app.database import get_db
-from app import models, schemas, oauth2, utils
+from app import models, schemas, oauth2, utils, cloudinary
+
 
 router = APIRouter(
     prefix="/users",
@@ -109,3 +110,69 @@ def search_users(
 
 
     return users
+
+@router.put("/me", response_model=schemas.UserResponse)
+def update_profile(
+    username: str | None = Form(None),
+    full_name: str | None = Form(None),
+    bio: str | None = Form(None),
+    profile_image: UploadFile | None = File(None),
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(oauth2.get_current_user)
+):
+
+    # Username update
+    if username:
+        existing_user = db.query(models.User).filter(
+            models.User.username == username,
+            models.User.id != current_user.id
+        ).first()
+
+        if existing_user:
+            raise HTTPException(
+                status_code=400,
+                detail="Username already taken"
+            )
+
+        current_user.username = username
+
+    # Full Name
+    if full_name is not None:
+        current_user.full_name = full_name
+
+    # Bio
+    if bio is not None:
+        current_user.bio = bio
+
+    # Profile Image
+    if profile_image:
+        image_url = cloudinary.upload_image(profile_image.file)
+        current_user.profile_image = image_url
+
+    db.commit()
+    db.refresh(current_user)
+
+    return current_user
+
+@router.put("/change-password")
+def change_password(
+    passwords: schemas.ChangePassword,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(oauth2.get_current_user)
+):
+
+    # Verify current password
+    if not utils.verify(passwords.current_password, current_user.password):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Current password is incorrect"
+        )
+
+    # Hash new password
+    current_user.password = utils.hash(passwords.new_password)
+
+    db.commit()
+
+    return {
+        "message": "Password changed successfully"
+    }

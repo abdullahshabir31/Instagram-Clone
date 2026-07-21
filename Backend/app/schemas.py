@@ -121,3 +121,33 @@ class UserSearchResponse(BaseModel):
     model_config = {
         "from_attributes": True
     }
+
+class UserUpdate(BaseModel):
+    username: str | None = None
+    full_name: str | None = None
+    bio: str | None = None
+
+class ChangePassword(BaseModel):
+    current_password: str
+    new_password: str
+
+class SavedPostResponse(BaseModel):
+    id: int
+    user_id: int
+    post_id: int
+    created_at: datetime
+
+    model_config = {
+        "from_attributes": True
+    }
+
+class SavedPostItem(BaseModel):
+    id: int
+    caption: str | None
+    image_url: str
+    owner_id: int
+    created_at: datetime
+
+    model_config = {
+        "from_attributes": True
+    }

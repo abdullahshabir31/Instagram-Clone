@@ -51,12 +51,18 @@ def create_post(
 
 @router.get("/", response_model=list[schemas.PostResponse])
 def get_posts(
+    skip: int = 0,
+    limit: int = 10,
     db: Session = Depends(get_db)
 ):
 
-    posts = db.query(models.Post).options(
-        joinedload(models.Post.owner)
-    ).all()
+    posts = (
+    db.query(models.Post)
+    .options(joinedload(models.Post.owner))
+    .offset(skip)
+    .limit(limit)
+    .all()
+)
 
 
     response = []
@@ -83,6 +89,8 @@ def get_posts(
 
 @router.get("/feed", response_model=list[schemas.FeedResponse])
 def get_feed(
+    skip: int = 0,
+    limit: int = 10,
     db: Session = Depends(get_db),
     current_user: models.User = Depends(oauth2.get_current_user)
 ):
@@ -99,13 +107,15 @@ def get_feed(
     following_ids.append(current_user.id)
 
 
-    posts = db.query(models.Post).options(
-        joinedload(models.Post.owner)
-    ).filter(
-        models.Post.owner_id.in_(following_ids)
-    ).order_by(
-        models.Post.created_at.desc()
-    ).all()
+    posts = (
+    db.query(models.Post)
+    .options(joinedload(models.Post.owner))
+    .filter(models.Post.owner_id.in_(following_ids))
+    .order_by(models.Post.created_at.desc())
+    .offset(skip)
+    .limit(limit)
+    .all()
+)
 
 
     response = []
