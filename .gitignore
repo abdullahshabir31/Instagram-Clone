@@ -11,3 +11,6 @@ frontend/node_modules/
 
 # Build
 dist/
+
+__pycache__/
+*.py[cod]
