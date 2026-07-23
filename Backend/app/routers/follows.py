@@ -10,9 +10,7 @@ router = APIRouter(
     tags=["Follows"]
 )
 
-@router.post("/{user_id}/follow",
-             status_code=status.HTTP_201_CREATED,
-             response_model=schemas.FollowResponse)
+@router.post("/{user_id}/follow", status_code=status.HTTP_201_CREATED)
 def follow_user(
     user_id: int,
     db: Session = Depends(get_db),
@@ -38,6 +36,7 @@ def follow_user(
         )
 
 
+    # Check already following
     existing_follow = db.query(models.Follow).filter(
         models.Follow.follower_id == current_user.id,
         models.Follow.following_id == user_id
@@ -51,6 +50,39 @@ def follow_user(
         )
 
 
+    # Private Account
+    if user.is_private:
+
+        existing_request = db.query(models.FollowRequest).filter(
+            models.FollowRequest.sender_id == current_user.id,
+            models.FollowRequest.receiver_id == user_id,
+            models.FollowRequest.status == "pending"
+        ).first()
+
+
+        if existing_request:
+            raise HTTPException(
+                status_code=400,
+                detail="Follow request already sent"
+            )
+
+
+        follow_request = models.FollowRequest(
+            sender_id=current_user.id,
+            receiver_id=user_id
+        )
+
+
+        db.add(follow_request)
+        db.commit()
+
+
+        return {
+            "message": "Follow request sent"
+        }
+
+
+    # Public Account
     new_follow = models.Follow(
         follower_id=current_user.id,
         following_id=user_id
@@ -61,18 +93,113 @@ def follow_user(
     db.commit()
     db.refresh(new_follow)
 
+
+    # Follow Notification
     notification = models.Notification(
-    sender_id=current_user.id,
-    receiver_id=user_id,
-    type="follow",
-    message=f"{current_user.username} started following you"
-)
+        sender_id=current_user.id,
+        receiver_id=user_id,
+        type="follow",
+        message=f"{current_user.username} started following you"
+    )
+
 
     db.add(notification)
     db.commit()
 
 
     return new_follow
+
+@router.get("/follow-requests")
+def get_follow_requests(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(oauth2.get_current_user)
+):
+
+    requests = db.query(models.FollowRequest).filter(
+        models.FollowRequest.receiver_id == current_user.id,
+        models.FollowRequest.status == "pending"
+    ).all()
+
+
+    return requests
+
+@router.put("/follow-requests/{request_id}/accept")
+def accept_follow_request(
+    request_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(oauth2.get_current_user)
+):
+
+    request = db.query(models.FollowRequest).filter(
+        models.FollowRequest.id == request_id,
+        models.FollowRequest.receiver_id == current_user.id
+    ).first()
+
+
+    if not request:
+        raise HTTPException(
+            status_code=404,
+            detail="Follow request not found"
+        )
+
+
+    new_follow = models.Follow(
+        follower_id=request.sender_id,
+        following_id=current_user.id
+    )
+
+
+    db.add(new_follow)
+
+
+    request.status = "accepted"
+
+
+    notification = models.Notification(
+        sender_id=current_user.id,
+        receiver_id=request.sender_id,
+        type="follow",
+        message=f"{current_user.username} accepted your follow request"
+    )
+
+
+    db.add(notification)
+
+    db.commit()
+
+
+    return {
+        "message": "Follow request accepted"
+    }
+
+@router.put("/follow-requests/{request_id}/reject")
+def reject_follow_request(
+    request_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(oauth2.get_current_user)
+):
+
+    request = db.query(models.FollowRequest).filter(
+        models.FollowRequest.id == request_id,
+        models.FollowRequest.receiver_id == current_user.id
+    ).first()
+
+
+    if not request:
+        raise HTTPException(
+            status_code=404,
+            detail="Follow request not found"
+        )
+
+
+    request.status = "rejected"
+
+    db.commit()
+
+
+    return {
+        "message": "Follow request rejected"
+    }
 
 @router.delete("/{user_id}/follow")
 def unfollow_user(
@@ -133,3 +260,4 @@ def get_following(
         "total_following": len(following),
         "following": following
     }
+

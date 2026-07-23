@@ -80,7 +80,8 @@ def get_my_profile(
         "email": current_user.email,
         "posts_count": posts_count,
         "followers_count": followers_count,
-        "following_count": following_count
+        "following_count": following_count,
+        "is_private": current_user.is_private
     }
 
 @router.get("/profile/{user_id}", response_model=schemas.ProfileResponse)
@@ -143,6 +144,7 @@ def update_profile(
     username: str | None = Form(None),
     full_name: str | None = Form(None),
     bio: str | None = Form(None),
+    is_private: bool | None = Form(None),
     profile_image: UploadFile | None = File(None),
     db: Session = Depends(get_db),
     current_user: models.User = Depends(oauth2.get_current_user)
@@ -163,18 +165,27 @@ def update_profile(
 
         current_user.username = username
 
+
     # Full Name
     if full_name is not None:
         current_user.full_name = full_name
+
+
+    # Private/Public Account
+    if is_private is not None:
+        current_user.is_private = is_private
+
 
     # Bio
     if bio is not None:
         current_user.bio = bio
 
+
     # Profile Image
     if profile_image:
         image_url = cloudinary.upload_image(profile_image.file)
         current_user.profile_image = image_url
+
 
     db.commit()
     db.refresh(current_user)

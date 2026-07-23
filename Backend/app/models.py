@@ -205,6 +205,41 @@ class Follow(Base):
         server_default=text("now()")
     )
 
+class FollowRequest(Base):
+    __tablename__ = "follow_requests"
+
+    id = Column(
+        Integer,
+        primary_key=True,
+        index=True
+    )
+
+    sender_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False
+    )
+
+    receiver_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False
+    )
+
+    status = Column(
+        String,
+        server_default="pending",
+        nullable=False
+    )
+    # pending, accepted, rejected
+
+
+    created_at = Column(
+        TIMESTAMP(timezone=True),
+        server_default=text("CURRENT_TIMESTAMP"),
+        nullable=False
+    )
+
 class SavedPost(Base):
     __tablename__ = "saved_posts"
 

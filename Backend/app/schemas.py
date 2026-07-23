@@ -110,6 +110,7 @@ class ProfileResponse(BaseModel):
     posts_count: int
     followers_count: int
     following_count: int
+    is_private: bool
 
     class Config:
         from_attributes = True
@@ -135,6 +136,7 @@ class UserUpdate(BaseModel):
     username: str | None = None
     full_name: str | None = None
     bio: str | None = None
+    is_private: bool | None = None
 
 class ChangePassword(BaseModel):
     current_password: str
