@@ -1,6 +1,6 @@
-from pydantic import BaseModel, EmailStr
 from datetime import date, datetime
 
+from pydantic import BaseModel, EmailStr
 
 
 class UserCreate(BaseModel):
@@ -33,9 +33,20 @@ class UserResponse(BaseModel):
         "from_attributes": True
     }
 
+
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
+
+
+class UserMiniResponse(BaseModel):
+    id: int
+    username: str
+
+    model_config = {
+        "from_attributes": True
+    }
+
 
 class PostCreate(BaseModel):
     caption: str | None = None
@@ -57,6 +68,7 @@ class PostResponse(BaseModel):
         "from_attributes": True
     }
 
+
 class FeedResponse(BaseModel):
     id: int
     caption: str | None
@@ -72,13 +84,16 @@ class FeedResponse(BaseModel):
         "from_attributes": True
     }
 
+
 class LikeResponse(BaseModel):
     id: int
     user_id: int
     post_id: int
 
-    class Config:
-        from_attributes = True
+    model_config = {
+        "from_attributes": True
+    }
+
 
 class CommentCreate(BaseModel):
     content: str
@@ -91,8 +106,10 @@ class CommentResponse(BaseModel):
     post_id: int
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = {
+        "from_attributes": True
+    }
+
 
 class FollowResponse(BaseModel):
     id: int
@@ -100,27 +117,25 @@ class FollowResponse(BaseModel):
     following_id: int
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = {
+        "from_attributes": True
+    }
 
 class ProfileResponse(BaseModel):
     id: int
     username: str
-    email: str
+    email: EmailStr
+
     posts_count: int
     followers_count: int
     following_count: int
+
     is_private: bool
 
-    class Config:
-        from_attributes = True
+    model_config = {
+        "from_attributes": True
+    }
 
-class UserMiniResponse(BaseModel):
-    id: int
-    username: str
-
-    class Config:
-        from_attributes = True
 
 class UserSearchResponse(BaseModel):
     id: int
@@ -132,15 +147,18 @@ class UserSearchResponse(BaseModel):
         "from_attributes": True
     }
 
+
 class UserUpdate(BaseModel):
     username: str | None = None
     full_name: str | None = None
     bio: str | None = None
     is_private: bool | None = None
 
+
 class ChangePassword(BaseModel):
     current_password: str
     new_password: str
+
 
 class SavedPostResponse(BaseModel):
     id: int
@@ -151,6 +169,7 @@ class SavedPostResponse(BaseModel):
     model_config = {
         "from_attributes": True
     }
+
 
 class SavedPostItem(BaseModel):
     id: int
@@ -163,6 +182,7 @@ class SavedPostItem(BaseModel):
         "from_attributes": True
     }
 
+
 class Token(BaseModel):
     access_token: str
     token_type: str
@@ -170,6 +190,7 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     id: str | None = None
+
 
 class StoryResponse(BaseModel):
     id: int
@@ -182,6 +203,7 @@ class StoryResponse(BaseModel):
         "from_attributes": True
     }
 
+
 class ReelCreate(BaseModel):
     caption: str | None = None
 
@@ -191,10 +213,13 @@ class ReelResponse(BaseModel):
     video_url: str
     caption: str | None
     created_at: datetime
+
     owner: UserSearchResponse
 
-    class Config:
-        from_attributes = True
+    model_config = {
+        "from_attributes": True
+    }
+
 
 class MessageCreate(BaseModel):
     receiver_id: int
@@ -209,27 +234,39 @@ class MessageResponse(BaseModel):
     id: int
     sender_id: int
     receiver_id: int
+
     message_type: str
     content: str | None
+
     file_url: str | None
     file_type: str | None
     file_name: str | None
     file_size: int | None
+
     is_seen: bool
+    is_deleted: bool
+
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = {
+        "from_attributes": True
+    }
+
 
 class NotificationResponse(BaseModel):
     id: int
+
     receiver_id: int
     sender_id: int
+
     type: str
     post_id: int | None = None
+
     message: str
     is_read: bool
+
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = {
+        "from_attributes": True
+    }

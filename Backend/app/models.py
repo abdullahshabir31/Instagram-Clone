@@ -1,61 +1,97 @@
-from sqlalchemy import Column, Date, Integer, String, Boolean, TIMESTAMP, text, ForeignKey
-from app.database import Base
+from sqlalchemy import (
+    Boolean,
+    Column,
+    Date,
+    ForeignKey,
+    Integer,
+    String,
+    TIMESTAMP,
+    text,
+)
 from sqlalchemy.orm import relationship
+
+from app.database import Base
 
 
 class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, nullable=False)
+
     username = Column(String, unique=True, nullable=False)
     email = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
+
     full_name = Column(String, nullable=True)
     bio = Column(String, nullable=True)
     profile_image = Column(String, nullable=True)
-    is_active = Column(Boolean, server_default="TRUE", nullable=False)
+    website = Column(String, nullable=True)
+
+    gender = Column(String, nullable=True)
+    date_of_birth = Column(Date, nullable=True)
+
+    is_active = Column(
+        Boolean,
+        server_default="TRUE",
+        nullable=False
+    )
+
+    is_private = Column(
+        Boolean,
+        server_default="FALSE",
+        nullable=False
+    )
+
     created_at = Column(
         TIMESTAMP(timezone=True),
         server_default=text("CURRENT_TIMESTAMP"),
         nullable=False
     )
-    posts = relationship("Post", back_populates="owner")
-    stories = relationship(
-    "Story",
-    back_populates="owner",
-    cascade="all, delete-orphan"
-    )
-    reels = relationship(
-    "Reel",
-    back_populates="owner",
-    cascade="all, delete-orphan"
-    )
-    likes = relationship("Like", back_populates="user")
-    comments = relationship("Comment", back_populates="user")
-    saved_posts = relationship("SavedPost", back_populates="user")
-    website = Column(String, nullable=True)
-
-    gender = Column(String, nullable=True)
-
-    date_of_birth = Column(Date, nullable=True)
-
-    is_private = Column(
-    Boolean,
-    server_default="FALSE",
-    nullable=False
-    )
 
     updated_at = Column(
-    TIMESTAMP(timezone=True),
-    server_default=text("CURRENT_TIMESTAMP"),
-    onupdate=text("CURRENT_TIMESTAMP"),
-    nullable=False
+        TIMESTAMP(timezone=True),
+        server_default=text("CURRENT_TIMESTAMP"),
+        onupdate=text("CURRENT_TIMESTAMP"),
+        nullable=False
+    )
+
+    posts = relationship(
+        "Post",
+        back_populates="owner"
+    )
+
+    stories = relationship(
+        "Story",
+        back_populates="owner",
+        cascade="all, delete-orphan"
+    )
+
+    reels = relationship(
+        "Reel",
+        back_populates="owner",
+        cascade="all, delete-orphan"
+    )
+
+    likes = relationship(
+        "Like",
+        back_populates="user"
+    )
+
+    comments = relationship(
+        "Comment",
+        back_populates="user"
+    )
+
+    saved_posts = relationship(
+        "SavedPost",
+        back_populates="user"
     )
 
 class Post(Base):
     __tablename__ = "posts"
 
     id = Column(Integer, primary_key=True, nullable=False)
+
     caption = Column(String, nullable=True)
     image_url = Column(String, nullable=False)
 
@@ -71,28 +107,31 @@ class Post(Base):
         nullable=False
     )
 
-    owner = relationship("User", back_populates="posts")
+    owner = relationship(
+        "User",
+        back_populates="posts"
+    )
 
     likes = relationship(
-    "Like",
-    back_populates="post",
-    cascade="all, delete-orphan"
+        "Like",
+        back_populates="post",
+        cascade="all, delete-orphan"
     )
 
     comments = relationship(
-    "Comment",
-    back_populates="post",
-    cascade="all, delete-orphan"
+        "Comment",
+        back_populates="post",
+        cascade="all, delete-orphan"
     )
 
     saved_posts = relationship(
-    "SavedPost",
-    back_populates="post",
-    cascade="all, delete-orphan"
+        "SavedPost",
+        back_populates="post",
+        cascade="all, delete-orphan"
     )
 
-class Story(Base):
 
+class Story(Base):
     __tablename__ = "stories"
 
     id = Column(
@@ -123,16 +162,20 @@ class Story(Base):
         nullable=False
     )
 
-
     owner = relationship(
         "User",
         back_populates="stories"
     )
 
+
 class Like(Base):
     __tablename__ = "likes"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(
+        Integer,
+        primary_key=True,
+        index=True
+    )
 
     user_id = Column(
         Integer,
@@ -148,19 +191,34 @@ class Like(Base):
 
     created_at = Column(
         TIMESTAMP(timezone=True),
-        server_default=text("now()")
+        server_default=text("CURRENT_TIMESTAMP"),
+        nullable=False
     )
 
+    user = relationship(
+        "User",
+        back_populates="likes"
+    )
 
-    user = relationship("User", back_populates="likes")
-    post = relationship("Post", back_populates="likes")
+    post = relationship(
+        "Post",
+        back_populates="likes"
+    )
+
 
 class Comment(Base):
     __tablename__ = "comments"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(
+        Integer,
+        primary_key=True,
+        index=True
+    )
 
-    content = Column(String, nullable=False)
+    content = Column(
+        String,
+        nullable=False
+    )
 
     user_id = Column(
         Integer,
@@ -176,17 +234,28 @@ class Comment(Base):
 
     created_at = Column(
         TIMESTAMP(timezone=True),
-        server_default=text("now()")
+        server_default=text("CURRENT_TIMESTAMP"),
+        nullable=False
     )
 
+    user = relationship(
+        "User",
+        back_populates="comments"
+    )
 
-    user = relationship("User", back_populates="comments")
-    post = relationship("Post", back_populates="comments")
+    post = relationship(
+        "Post",
+        back_populates="comments"
+    )
 
 class Follow(Base):
     __tablename__ = "follows"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(
+        Integer,
+        primary_key=True,
+        index=True
+    )
 
     follower_id = Column(
         Integer,
@@ -202,8 +271,10 @@ class Follow(Base):
 
     created_at = Column(
         TIMESTAMP(timezone=True),
-        server_default=text("now()")
+        server_default=text("CURRENT_TIMESTAMP"),
+        nullable=False
     )
+
 
 class FollowRequest(Base):
     __tablename__ = "follow_requests"
@@ -233,12 +304,12 @@ class FollowRequest(Base):
     )
     # pending, accepted, rejected
 
-
     created_at = Column(
         TIMESTAMP(timezone=True),
         server_default=text("CURRENT_TIMESTAMP"),
         nullable=False
     )
+
 
 class Block(Base):
     __tablename__ = "blocks"
@@ -267,10 +338,15 @@ class Block(Base):
         nullable=False
     )
 
+
 class SavedPost(Base):
     __tablename__ = "saved_posts"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(
+        Integer,
+        primary_key=True,
+        index=True
+    )
 
     user_id = Column(
         Integer,
@@ -290,13 +366,24 @@ class SavedPost(Base):
         nullable=False
     )
 
-    user = relationship("User", back_populates="saved_posts")
-    post = relationship("Post", back_populates="saved_posts")
+    user = relationship(
+        "User",
+        back_populates="saved_posts"
+    )
+
+    post = relationship(
+        "Post",
+        back_populates="saved_posts"
+    )
 
 class Message(Base):
     __tablename__ = "messages"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(
+        Integer,
+        primary_key=True,
+        index=True
+    )
 
     sender_id = Column(
         Integer,
@@ -321,15 +408,18 @@ class Message(Base):
         String,
         nullable=True
     )
-    # text message
+    # Text message
 
     file_url = Column(
         String,
         nullable=True
     )
-    # uploaded file link
+    # Uploaded file URL
 
-    file_type = Column(String, nullable=True)
+    file_type = Column(
+        String,
+        nullable=True
+    )
 
     file_name = Column(
         String,
@@ -347,17 +437,18 @@ class Message(Base):
         nullable=False
     )
 
+    is_deleted = Column(
+        Boolean,
+        server_default="FALSE",
+        nullable=False
+    )
+
     created_at = Column(
         TIMESTAMP(timezone=True),
         server_default=text("CURRENT_TIMESTAMP"),
         nullable=False
     )
 
-    is_deleted = Column(
-    Boolean,
-    server_default="FALSE",
-    nullable=False
-    )
 
 class Reel(Base):
     __tablename__ = "reels"
@@ -394,6 +485,7 @@ class Reel(Base):
         "User",
         back_populates="reels"
     )
+
 
 class Notification(Base):
     __tablename__ = "notifications"

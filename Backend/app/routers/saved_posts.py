@@ -1,25 +1,34 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from app.database import get_db
 from app import models, schemas, oauth2
+
 
 router = APIRouter(
     prefix="/users/me",
     tags=["Saved Posts"]
 )
 
-@router.get("/saved-posts", response_model=list[schemas.SavedPostItem])
+
+@router.get(
+    "/saved-posts",
+    response_model=list[schemas.SavedPostItem]
+)
 def get_saved_posts(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(oauth2.get_current_user)
 ):
 
-    saved_posts = db.query(models.SavedPost).filter(
-        models.SavedPost.owner_id == current_user.id
-    ).all()
+    saved_posts = (
+        db.query(models.SavedPost)
+        .options(joinedload(models.SavedPost.post))
+        .filter(models.SavedPost.user_id == current_user.id)
+        .all()
+    )
 
     return [saved.post for saved in saved_posts]
+
 
 @router.post(
     "/saved-posts/{post_id}",
@@ -45,7 +54,7 @@ def save_post(
 
     # Already saved?
     saved_post = db.query(models.SavedPost).filter(
-        models.SavedPost.owner_id == current_user.id,
+        models.SavedPost.user_id == current_user.id,
         models.SavedPost.post_id == post_id
     ).first()
 
@@ -66,7 +75,11 @@ def save_post(
 
     return new_saved_post
 
-@router.delete("/saved-posts/{post_id}", status_code=status.HTTP_204_NO_CONTENT)
+
+@router.delete(
+    "/saved-posts/{post_id}",
+    status_code=status.HTTP_204_NO_CONTENT
+)
 def unsave_post(
     post_id: int,
     db: Session = Depends(get_db),
@@ -74,7 +87,7 @@ def unsave_post(
 ):
 
     saved_post = db.query(models.SavedPost).filter(
-        models.SavedPost.owner_id == current_user.id,
+        models.SavedPost.user_id == current_user.id,
         models.SavedPost.post_id == post_id
     ).first()
 
@@ -88,4 +101,3 @@ def unsave_post(
     db.commit()
 
     return
-

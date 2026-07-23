@@ -1,18 +1,21 @@
-from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import computed_field
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
+    # Database
     database_host: str
     database_port: int
     database_name: str
     database_user: str
     database_password: str
 
+    # JWT Authentication
     secret_key: str
     algorithm: str
     access_token_expire_minutes: int
 
+    # Cloudinary
     cloudinary_cloud_name: str
     cloudinary_api_key: str
     cloudinary_api_secret: str

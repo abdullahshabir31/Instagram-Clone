@@ -11,12 +11,13 @@ cloudinary.config(
 )
 
 
-def upload_image(file):
+def upload_image(file) -> str | None:
     result = cloudinary.uploader.upload(file)
 
     return result.get("secure_url")
 
-def upload_video(file):
+
+def upload_video(file) -> str | None:
     result = cloudinary.uploader.upload(
         file,
         resource_type="video"
@@ -24,8 +25,11 @@ def upload_video(file):
 
     return result.get("secure_url")
 
-def upload_file(file, resource_type="auto"):
 
+def upload_file(
+    file,
+    resource_type: str = "auto"
+) -> dict:
     result = cloudinary.uploader.upload(
         file,
         resource_type=resource_type

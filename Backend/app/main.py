@@ -1,20 +1,22 @@
 from fastapi import FastAPI
+
 from app.config import settings
-from app.database import engine, Base
-from app import models
-from app.routers import users
-from app.routers import auth
-from app.routers import posts
-from app.routers import likes
-from app.routers import comments
-from app.routers import follows
-from app.routers import saved_posts
-from app.routers import stories
-from app.routers import reels
-from app.routers import chat
-from app.routers import notifications
-from app.routers import explore
-from app.routers import block
+from app.routers import (
+    users,
+    auth,
+    posts,
+    likes,
+    comments,
+    follows,
+    saved_posts,
+    stories,
+    reels,
+    chat,
+    notifications,
+    explore,
+    block
+)
+
 
 app = FastAPI(
     title="Pixora API",
@@ -22,7 +24,12 @@ app = FastAPI(
     description="Backend API for Pixora Social Platform"
 )
 
+
+# Using Alembic for database migrations
 # Base.metadata.create_all(bind=engine)
+
+
+# Routers
 app.include_router(users.router)
 app.include_router(auth.router)
 app.include_router(posts.router)
@@ -37,8 +44,10 @@ app.include_router(notifications.router)
 app.include_router(explore.router)
 app.include_router(block.router)
 
+
 @app.get("/")
 def root():
+
     return {
         "message": "Welcome to Pixora API 🚀",
         "database": settings.database_name

@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
+from sqlalchemy import and_, or_
 from sqlalchemy.orm import Session
-from sqlalchemy import or_, and_
 
 from app.database import get_db
-from app import models, schemas, oauth2, cloudinary
+from app import cloudinary, models, oauth2, schemas
 
 
 router = APIRouter(
@@ -18,19 +18,16 @@ def send_message(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(oauth2.get_current_user)
 ):
-
     # Check receiver exists
     receiver = db.query(models.User).filter(
         models.User.id == message.receiver_id
     ).first()
 
-
-    if not receiver:
+    if receiver is None:
         raise HTTPException(
-            status_code=404,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail="Receiver not found"
         )
-
 
     # Check if receiver blocked current user
     blocked = db.query(models.Block).filter(
@@ -38,13 +35,11 @@ def send_message(
         models.Block.blocked_id == current_user.id
     ).first()
 
-
     if blocked:
         raise HTTPException(
-            status_code=403,
+            status_code=status.HTTP_403_FORBIDDEN,
             detail="You are blocked by this user"
         )
-
 
     # Check if current user blocked receiver
     blocked_by_you = db.query(models.Block).filter(
@@ -52,15 +47,13 @@ def send_message(
         models.Block.blocked_id == message.receiver_id
     ).first()
 
-
     if blocked_by_you:
         raise HTTPException(
-            status_code=403,
+            status_code=status.HTTP_403_FORBIDDEN,
             detail="You blocked this user"
         )
 
-
-    # Create Message
+    # Create message
     new_message = models.Message(
         sender_id=current_user.id,
         receiver_id=message.receiver_id,
@@ -71,8 +64,7 @@ def send_message(
         file_size=message.file_size
     )
 
-
-    # Create Notification
+    # Create notification
     notification = models.Notification(
         sender_id=current_user.id,
         receiver_id=message.receiver_id,
@@ -80,16 +72,13 @@ def send_message(
         message=f"{current_user.username} sent you a message"
     )
 
-
     db.add(new_message)
     db.add(notification)
 
     db.commit()
     db.refresh(new_message)
 
-
     return new_message
-
 
 
 @router.get("/{user_id}", response_model=list[schemas.MessageResponse])
@@ -98,7 +87,6 @@ def get_conversation(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(oauth2.get_current_user)
 ):
-
     messages = db.query(models.Message).filter(
         or_(
             and_(
@@ -114,13 +102,12 @@ def get_conversation(
         models.Message.created_at
     ).all()
 
-
+    # Mark received messages as seen
     for message in messages:
         if message.receiver_id == current_user.id:
             message.is_seen = True
 
     db.commit()
-
 
     return messages
 
@@ -131,19 +118,16 @@ def send_file_message(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(oauth2.get_current_user)
 ):
-
     # Check receiver exists
     receiver = db.query(models.User).filter(
         models.User.id == receiver_id
     ).first()
 
-
-    if not receiver:
+    if receiver is None:
         raise HTTPException(
-            status_code=404,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail="Receiver not found"
         )
-
 
     # Check if receiver blocked current user
     blocked = db.query(models.Block).filter(
@@ -151,13 +135,11 @@ def send_file_message(
         models.Block.blocked_id == current_user.id
     ).first()
 
-
     if blocked:
         raise HTTPException(
-            status_code=403,
+            status_code=status.HTTP_403_FORBIDDEN,
             detail="You are blocked by this user"
         )
-
 
     # Check if current user blocked receiver
     blocked_by_you = db.query(models.Block).filter(
@@ -165,33 +147,24 @@ def send_file_message(
         models.Block.blocked_id == receiver_id
     ).first()
 
-
     if blocked_by_you:
         raise HTTPException(
-            status_code=403,
+            status_code=status.HTTP_403_FORBIDDEN,
             detail="You blocked this user"
         )
 
+    # Upload file
+    upload_result = cloudinary.upload_file(file.file)
 
-    # Upload File
-    upload_result = cloudinary.upload_file(
-        file.file
-    )
-
-
-    # Detect File Type
+    # Detect message type
     if file.content_type.startswith("image"):
         message_type = "image"
-
     elif file.content_type.startswith("video"):
         message_type = "video"
-
     else:
         message_type = "document"
 
-
-
-    # Create Message
+    # Create message
     new_message = models.Message(
         sender_id=current_user.id,
         receiver_id=receiver_id,
@@ -202,8 +175,7 @@ def send_file_message(
         file_size=upload_result["size"]
     )
 
-
-    # Create Notification
+    # Create notification
     notification = models.Notification(
         sender_id=current_user.id,
         receiver_id=receiver_id,
@@ -211,30 +183,29 @@ def send_file_message(
         message=f"{current_user.username} sent you a file"
     )
 
-
     db.add(new_message)
     db.add(notification)
 
     db.commit()
     db.refresh(new_message)
 
-
     return new_message
+
 
 @router.get("/unread/count")
 def unread_messages_count(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(oauth2.get_current_user)
 ):
-
     count = db.query(models.Message).filter(
         models.Message.receiver_id == current_user.id,
-        models.Message.is_seen == False
+        models.Message.is_seen.is_(False)
     ).count()
 
     return {
         "unread_messages": count
     }
+
 
 @router.delete("/message/{message_id}")
 def unsend_message(
@@ -242,33 +213,27 @@ def unsend_message(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(oauth2.get_current_user)
 ):
-
     message = db.query(models.Message).filter(
         models.Message.id == message_id
     ).first()
 
-
-    if not message:
+    if message is None:
         raise HTTPException(
-            status_code=404,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail="Message not found"
         )
 
-
     if message.sender_id != current_user.id:
         raise HTTPException(
-            status_code=403,
+            status_code=status.HTTP_403_FORBIDDEN,
             detail="You can only unsend your own messages"
         )
-
 
     message.is_deleted = True
     message.content = "This message was unsent"
     message.file_url = None
 
-
     db.commit()
-
 
     return {
         "message": "Message unsent successfully"
