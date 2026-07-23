@@ -15,3 +15,11 @@ def upload_image(file):
     result = cloudinary.uploader.upload(file)
 
     return result.get("secure_url")
+
+def upload_video(file):
+    result = cloudinary.uploader.upload(
+        file,
+        resource_type="video"
+    )
+
+    return result.get("secure_url")

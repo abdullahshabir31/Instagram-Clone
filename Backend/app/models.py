@@ -25,6 +25,11 @@ class User(Base):
     back_populates="owner",
     cascade="all, delete-orphan"
     )
+    reels = relationship(
+    "Reel",
+    back_populates="owner",
+    cascade="all, delete-orphan"
+    )
     likes = relationship("Like", back_populates="user")
     comments = relationship("Comment", back_populates="user")
     saved_posts = relationship("SavedPost", back_populates="user")
@@ -226,3 +231,38 @@ class SavedPost(Base):
     user = relationship("User", back_populates="saved_posts")
     post = relationship("Post", back_populates="saved_posts")
 
+class Reel(Base):
+    __tablename__ = "reels"
+
+    id = Column(
+        Integer,
+        primary_key=True,
+        index=True
+    )
+
+    video_url = Column(
+        String,
+        nullable=False
+    )
+
+    caption = Column(
+        String,
+        nullable=True
+    )
+
+    owner_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False
+    )
+
+    created_at = Column(
+        TIMESTAMP(timezone=True),
+        server_default=text("CURRENT_TIMESTAMP"),
+        nullable=False
+    )
+
+    owner = relationship(
+        "User",
+        back_populates="reels"
+    )

@@ -10,6 +10,7 @@ from app.routers import comments
 from app.routers import follows
 from app.routers import saved_posts
 from app.routers import stories
+from app.routers import reels
 
 app = FastAPI(
     title="Pixora API",
@@ -26,6 +27,7 @@ app.include_router(comments.router)
 app.include_router(follows.router)
 app.include_router(saved_posts.router)
 app.include_router(stories.router)
+app.include_router(reels.router)
 
 
 @app.get("/")

@@ -179,3 +179,17 @@ class StoryResponse(BaseModel):
     model_config = {
         "from_attributes": True
     }
+
+class ReelCreate(BaseModel):
+    caption: str | None = None
+
+
+class ReelResponse(BaseModel):
+    id: int
+    video_url: str
+    caption: str | None
+    created_at: datetime
+    owner: UserSearchResponse
+
+    class Config:
+        from_attributes = True
