@@ -13,6 +13,7 @@ from app.routers import stories
 from app.routers import reels
 from app.routers import chat
 from app.routers import notifications
+from app.routers import explore
 
 app = FastAPI(
     title="Pixora API",
@@ -32,6 +33,7 @@ app.include_router(stories.router)
 app.include_router(reels.router)
 app.include_router(chat.router)
 app.include_router(notifications.router)
+app.include_router(explore.router)
 
 @app.get("/")
 def root():
