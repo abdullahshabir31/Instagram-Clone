@@ -10,7 +10,11 @@ from app.routers import comments
 from app.routers import follows
 from app.routers import saved_posts
 
-app = FastAPI()
+app = FastAPI(
+    title="Pixora API",
+    version="1.0.0",
+    description="Backend API for Pixora Social Platform"
+)
 
 Base.metadata.create_all(bind=engine)
 app.include_router(users.router)
@@ -25,6 +29,6 @@ app.include_router(saved_posts.router)
 @app.get("/")
 def root():
     return {
-        "message": "Welcome to Instagram Clone API 🚀",
+        "message": "Welcome to Pixora API 🚀",
         "database": settings.database_name
     }

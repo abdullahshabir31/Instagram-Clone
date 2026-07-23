@@ -1,8 +1,10 @@
-# Instagram Clone - Backend
+# 🚀 Pixora - Backend
 
-This is the backend of the Instagram Clone full-stack application built with **FastAPI** and **PostgreSQL**.
+This is the backend of **Pixora**, a modern full-stack social media platform built with **FastAPI** and **PostgreSQL**.
 
-The backend provides REST APIs for authentication, user management, posts, likes, comments, and other social media features. It follows a clean and scalable architecture using FastAPI, SQLAlchemy, and PostgreSQL.
+The backend provides secure REST APIs for authentication, user management, posts, likes, comments, follows, saved posts, and other social media features. It follows a clean, scalable, and production-ready architecture using FastAPI, SQLAlchemy, and PostgreSQL.
+
+---
 
 ## 🚀 Tech Stack
 
@@ -17,6 +19,8 @@ The backend provides REST APIs for authentication, user management, posts, likes
 - Pydantic
 - Python-dotenv
 
+---
+
 ## 📂 Project Structure
 
 ```text
@@ -24,53 +28,56 @@ Backend/
 │
 ├── app/
 │   ├── main.py          # FastAPI application entry point
-│   ├── database.py      # Database connection setup
-│   ├── models.py        # SQLAlchemy database models
-│   ├── schemas.py       # Pydantic request/response schemas
-│   ├── oauth2.py        # JWT authentication logic
+│   ├── database.py      # Database connection
+│   ├── models.py        # SQLAlchemy models
+│   ├── schemas.py       # Pydantic schemas
+│   ├── oauth2.py        # JWT authentication
 │   │
 │   └── routers/         # API route modules
 │
-├── venv/
+├── alembic/
 ├── requirements.txt
-└── .env
+├── .env
+└── venv/
 ```
+
+---
 
 ## ⚙️ Installation & Setup
 
-Clone the repository:
+Clone the repository
 
 ```bash
 git clone <repository-url>
 ```
 
-Move into the backend folder:
+Move into the backend folder
 
 ```bash
 cd Backend
 ```
 
-Create a virtual environment:
+Create a virtual environment
 
 ```bash
 python -m venv venv
 ```
 
-Activate virtual environment:
+Activate the virtual environment
 
-Windows:
+Windows
 
 ```bash
 venv\Scripts\activate
 ```
 
-Install dependencies:
+Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Create a `.env` file and add your environment variables:
+Create a `.env` file
 
 ```env
 DATABASE_URL=your_database_url
@@ -78,65 +85,48 @@ SECRET_KEY=your_secret_key
 ALGORITHM=HS256
 ```
 
-Run the development server:
+Run the development server
 
 ```bash
-uvicorn app.main:app --reload
+python -m uvicorn app.main:app --reload
 ```
 
-The API will run at:
-
-```text
-http://127.0.0.1:8000
-```
-
-API documentation:
+API Documentation
 
 ```text
 http://127.0.0.1:8000/docs
 ```
 
-## ✨ Features
+---
 
-Currently under development:
+## ✨ Current Features
 
-- User registration and login
-- JWT authentication
-- User profiles
-- Create and manage posts
-- Like system
-- Comment system
-- Follow/unfollow system
-- Search functionality
-- Notifications
+- User Registration
+- User Login
+- JWT Authentication
+- Protected Routes
+- User Profiles
+- Create Posts
+- Like Posts
+- Comment System
+- Follow / Unfollow Users
+- Saved Posts
 
-## 🔐 Authentication
-
-The backend uses JWT (JSON Web Token) authentication.
-
-Users will be able to:
-
-- Register an account
-- Login securely
-- Access protected routes
-- Manage their profile and content
+---
 
 ## 🗄️ Database
 
-PostgreSQL is used as the main database.
+Pixora uses **PostgreSQL** as the primary database with **SQLAlchemy ORM** for database management.
 
-SQLAlchemy ORM handles:
-
-- Database models
-- Relationships
-- Queries
-- Data management
+---
 
 ## 📌 Status
 
-🚧 Backend is currently under development.
+🚧 Pixora Backend is currently under active development.
 
-New APIs and features will be added gradually.
+New APIs and features will be added continuously.
+
+---
 
 ## 👨‍💻 Author
 

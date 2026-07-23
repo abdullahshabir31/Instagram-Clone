@@ -1,8 +1,10 @@
-# Instagram Clone - Frontend
+# 🎨 Pixora - Frontend
 
-This is the frontend of the Instagram Clone full-stack application built with **React.js** and **Vite**.
+This is the frontend of **Pixora**, a modern full-stack social media platform built with **React.js** and **Vite**.
 
-The frontend provides a modern and responsive user interface for interacting with the social media platform. It will connect with the FastAPI backend to handle authentication, posts, profiles, likes, comments, and other features.
+The frontend provides a modern, responsive, and interactive user interface that communicates with the FastAPI backend for authentication, posts, profiles, likes, comments, follows, and other social media features.
+
+---
 
 ## 🚀 Tech Stack
 
@@ -11,11 +13,14 @@ The frontend provides a modern and responsive user interface for interacting wit
 - JavaScript
 - React Router DOM
 - Axios
+- Tailwind CSS
 - ESLint
+
+---
 
 ## 📂 Project Structure
 
-```
+```text
 Frontend/
 │
 ├── public/
@@ -33,62 +38,68 @@ Frontend/
 └── eslint.config.js
 ```
 
+---
+
 ## ⚙️ Installation & Setup
 
-Clone the repository:
+Clone the repository
 
 ```bash
 git clone <repository-url>
 ```
 
-Move into the frontend folder:
+Move into the frontend folder
 
 ```bash
 cd Frontend
 ```
 
-Install dependencies:
+Install dependencies
 
 ```bash
 npm install
 ```
 
-Start the development server:
+Run the development server
 
 ```bash
 npm run dev
 ```
 
-The application will run on the local Vite development server.
+---
 
-## ✨ Features
+## ✨ Current Features
 
-Currently under development:
+- User Authentication
+- User Profiles
+- Create Posts
+- Home Feed
+- Like System
+- Comment System
+- Follow System
+- Responsive Design
 
-- User authentication
-- User profiles
-- Create and view posts
-- Like and comment system
-- Follow system
-- Search functionality
-- Responsive design
+---
 
 ## 🔗 Backend
 
-This frontend communicates with a FastAPI backend that handles:
+The frontend communicates with the **Pixora FastAPI Backend** which handles:
 
 - REST APIs
 - Authentication
-- Database operations
-- User and post management
+- Database Operations
+- User Management
+- Post Management
+
+---
 
 ## 📌 Status
 
-🚧 Project is currently in development.
+🚧 Pixora Frontend is currently under active development.
 
-More features will be added gradually.
+More features will be added soon.
 
-```
+---
 
 ## 👨‍💻 Author
 
@@ -96,7 +107,6 @@ More features will be added gradually.
 
 ## 🔗 Connect With Me
 
-* GitHub: https://github.com/abdullahshabir31
-* LinkedIn: https://www.linkedin.com/in/abdullahshabir31
-* Portfolio: https://abdullah-shabir-portfolio.vercel.app/
-```
+- GitHub: https://github.com/abdullahshabir31
+- LinkedIn: https://www.linkedin.com/in/abdullahshabir31
+- Portfolio: https://abdullah-shabir-portfolio.vercel.app/

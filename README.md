@@ -1,8 +1,6 @@
-# 📸 Instagram Clone - Full Stack Application
+# 🚀 Pixora
 
-A full-stack Instagram-inspired social media application built with **React.js**, **FastAPI**, and **PostgreSQL**.
-
-This project aims to recreate core Instagram features including user authentication, profiles, posts, likes, comments, and social interactions while following a modern full-stack architecture.
+**Pixora** is a modern full-stack social media platform inspired by today's leading social networking applications. It is built with **React.js**, **FastAPI**, and **PostgreSQL**, following a scalable and production-ready architecture.
 
 ---
 
@@ -21,15 +19,15 @@ This project aims to recreate core Instagram features including user authenticat
 
 - Python
 - FastAPI
-- SQLAlchemy
 - PostgreSQL
+- SQLAlchemy
+- Alembic
 - JWT Authentication
 - Pydantic
-- Alembic
 
 ---
 
-## ✨ Features
+## ✨ Current Features
 
 ### 🔐 Authentication
 
@@ -39,57 +37,66 @@ This project aims to recreate core Instagram features including user authenticat
 - Secure Password Hashing
 - Protected Routes
 
-### 👤 User Profile
+### 👤 User Profiles
 
 - View Profile
 - Edit Profile
 - Profile Picture
-- User Information
+- Bio
+- Follow / Unfollow Users
+- Followers & Following
 
-### 📝 Posts
+### 📸 Posts
 
 - Create Posts
 - Upload Images
-- Add Captions
+- Captions
+- Edit Posts
 - Delete Posts
-- View Feed
 
 ### ❤️ Social Features
 
 - Like / Unlike Posts
-- Comments
-- Follow / Unfollow Users
+- Comment System
+- Save Posts
 - User Search
+- Home Feed
 
-### 🔔 Additional Features (Coming Soon)
+---
 
+## 🚀 Upcoming Features
+
+- Stories
+- Shorts (Vertical Videos)
+- Real-Time Chat
 - Notifications
-- Direct Messaging
 - Explore Page
-- Real-time Chat
+- Search
+- AI Caption Generator
+- AI Hashtag Generator
 
 ---
 
 ## 📂 Project Structure
 
 ```text
-Instagram-Clone
+Pixora-Project/
 │
-├── Frontend
+├── Frontend/
 │   ├── React Application
 │   └── User Interface
 │
-├── Backend
+├── Backend/
 │   ├── FastAPI Application
 │   ├── REST APIs
-│   └── Database Management
+│   └── PostgreSQL Database
 │
 └── README.md
 ```
 
 ---
 
-## ⚙️ Installation & Setup
+## ⚙️ Installation
 
 ### Clone Repository
 
@@ -97,73 +104,41 @@ Instagram-Clone
 git clone <repository-url>
 ```
 
-Move into project folder:
+Move into project folder
 
 ```bash
-cd Instagram-Clone
+cd Pixora-Project
 ```
 
 ---
 
-## Frontend Setup
-
-Go to frontend folder:
+## Frontend
 
 ```bash
 cd Frontend
-```
-
-Install dependencies:
-
-```bash
 npm install
-```
-
-Run development server:
-
-```bash
 npm run dev
 ```
 
 ---
 
-## Backend Setup
-
-Go to backend folder:
+## Backend
 
 ```bash
 cd Backend
-```
 
-Create virtual environment:
-
-```bash
 python -m venv venv
-```
 
-Activate environment:
-
-Windows:
-
-```bash
 venv\Scripts\activate
-```
 
-Install dependencies:
-
-```bash
 pip install -r requirements.txt
+
+python -m uvicorn app.main:app --reload
 ```
 
-Run FastAPI server:
+API Documentation
 
-```bash
-uvicorn app.main:app --reload
-```
-
-API Documentation:
-
-```
+```text
 http://127.0.0.1:8000/docs
 ```
 
@@ -171,37 +146,30 @@ http://127.0.0.1:8000/docs
 
 ## 🗄️ Database
 
-This project uses **PostgreSQL** as the primary database.
-
-Database handling:
-
-- SQLAlchemy ORM
-- Database Models
-- Relationships
-- Queries
+Pixora uses **PostgreSQL** with **SQLAlchemy ORM** and **Alembic** for database migrations.
 
 ---
 
-## 🔗 Application Architecture
+## 🔗 Architecture
 
-```
+```text
 React Frontend
-       |
-       | HTTP Requests (Axios)
-       |
+        │
+        │ Axios / REST API
+        ▼
 FastAPI Backend
-       |
-       |
+        │
+        ▼
 PostgreSQL Database
 ```
 
 ---
 
-## 📌 Project Status
+## 📌 Status
 
-🚧 Currently under development.
+🚧 Pixora is currently under active development.
 
-New features and improvements will be added gradually.
+New features and improvements are continuously being added.
 
 ---
 
