@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, TIMESTAMP, text, ForeignKey
+from sqlalchemy import Column, Date, Integer, String, Boolean, TIMESTAMP, text, ForeignKey
 from app.database import Base
 from sqlalchemy.orm import relationship
 
@@ -20,9 +20,32 @@ class User(Base):
         nullable=False
     )
     posts = relationship("Post", back_populates="owner")
+    stories = relationship(
+    "Story",
+    back_populates="owner",
+    cascade="all, delete-orphan"
+    )
     likes = relationship("Like", back_populates="user")
     comments = relationship("Comment", back_populates="user")
     saved_posts = relationship("SavedPost", back_populates="user")
+    website = Column(String, nullable=True)
+
+    gender = Column(String, nullable=True)
+
+    date_of_birth = Column(Date, nullable=True)
+
+    is_private = Column(
+    Boolean,
+    server_default="FALSE",
+    nullable=False
+    )
+
+    updated_at = Column(
+    TIMESTAMP(timezone=True),
+    server_default=text("CURRENT_TIMESTAMP"),
+    onupdate=text("CURRENT_TIMESTAMP"),
+    nullable=False
+    )
 
 class Post(Base):
     __tablename__ = "posts"
@@ -61,6 +84,44 @@ class Post(Base):
     "SavedPost",
     back_populates="post",
     cascade="all, delete-orphan"
+    )
+
+class Story(Base):
+
+    __tablename__ = "stories"
+
+    id = Column(
+        Integer,
+        primary_key=True,
+        index=True
+    )
+
+    media_url = Column(
+        String,
+        nullable=False
+    )
+
+    owner_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False
+    )
+
+    created_at = Column(
+        TIMESTAMP(timezone=True),
+        server_default=text("CURRENT_TIMESTAMP"),
+        nullable=False
+    )
+
+    expires_at = Column(
+        TIMESTAMP(timezone=True),
+        nullable=False
+    )
+
+
+    owner = relationship(
+        "User",
+        back_populates="stories"
     )
 
 class Like(Base):

@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr
-from datetime import datetime
+from datetime import date, datetime
 
 
 
@@ -9,6 +9,9 @@ class UserCreate(BaseModel):
     password: str
     full_name: str | None = None
     bio: str | None = None
+    website: str | None = None
+    gender: str | None = None
+    date_of_birth: date | None = None
 
 
 class UserResponse(BaseModel):
@@ -20,6 +23,11 @@ class UserResponse(BaseModel):
     profile_image: str | None
     is_active: bool
     created_at: datetime
+    website: str | None
+    gender: str | None
+    date_of_birth: date | None
+    is_private: bool
+    updated_at: datetime
 
     model_config = {
         "from_attributes": True
@@ -160,3 +168,14 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     id: str | None = None
+
+class StoryResponse(BaseModel):
+    id: int
+    media_url: str
+    owner_id: int
+    created_at: datetime
+    expires_at: datetime
+
+    model_config = {
+        "from_attributes": True
+    }
