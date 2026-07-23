@@ -23,3 +23,17 @@ def upload_video(file):
     )
 
     return result.get("secure_url")
+
+def upload_file(file, resource_type="auto"):
+
+    result = cloudinary.uploader.upload(
+        file,
+        resource_type=resource_type
+    )
+
+    return {
+        "url": result.get("secure_url"),
+        "type": result.get("resource_type"),
+        "name": result.get("original_filename"),
+        "size": result.get("bytes")
+    }

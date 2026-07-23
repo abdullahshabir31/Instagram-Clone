@@ -231,6 +231,72 @@ class SavedPost(Base):
     user = relationship("User", back_populates="saved_posts")
     post = relationship("Post", back_populates="saved_posts")
 
+class Message(Base):
+    __tablename__ = "messages"
+
+    id = Column(Integer, primary_key=True, index=True)
+
+    sender_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False
+    )
+
+    receiver_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False
+    )
+
+    message_type = Column(
+        String,
+        server_default="text",
+        nullable=False
+    )
+    # text, image, video, document
+
+    content = Column(
+        String,
+        nullable=True
+    )
+    # text message
+
+    file_url = Column(
+        String,
+        nullable=True
+    )
+    # uploaded file link
+
+    file_type = Column(String, nullable=True)
+
+    file_name = Column(
+        String,
+        nullable=True
+    )
+
+    file_size = Column(
+        Integer,
+        nullable=True
+    )
+
+    is_seen = Column(
+        Boolean,
+        server_default="FALSE",
+        nullable=False
+    )
+
+    created_at = Column(
+        TIMESTAMP(timezone=True),
+        server_default=text("CURRENT_TIMESTAMP"),
+        nullable=False
+    )
+
+    is_deleted = Column(
+    Boolean,
+    server_default="FALSE",
+    nullable=False
+    )
+
 class Reel(Base):
     __tablename__ = "reels"
 

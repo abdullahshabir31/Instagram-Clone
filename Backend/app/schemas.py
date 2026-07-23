@@ -193,3 +193,28 @@ class ReelResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class MessageCreate(BaseModel):
+    receiver_id: int
+    content: str | None = None
+    message_type: str = "text"
+    file_url: str | None = None
+    file_name: str | None = None
+    file_size: int | None = None
+
+
+class MessageResponse(BaseModel):
+    id: int
+    sender_id: int
+    receiver_id: int
+    message_type: str
+    content: str | None
+    file_url: str | None
+    file_type: str | None
+    file_name: str | None
+    file_size: int | None
+    is_seen: bool
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
